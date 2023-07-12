@@ -1,18 +1,21 @@
 import { createStyles, Header, Container, Group, rem } from "@mantine/core";
-import CartWidget from "../common/CartWidget";
+import CartWidget from "../common/cartWidget/CartWidget";
+import { Link, Outlet } from "react-router-dom";
 
 const useStyles = createStyles((theme) => ({
+  Header: {
+    backgroundColor: "#78ffeb",
+  },
   header: {
     display: "flex",
     justifyContent: "space-between",
-
     alignItems: "center",
     height: "100%",
   },
   link: {
     display: "block",
     lineHeight: 1,
-    padding: `${rem(8)} ${rem(12)}`,
+    padding: `${rem(8)} ${rem(22)}`,
     borderRadius: theme.radius.sm,
     textDecoration: "none",
     color:
@@ -34,33 +37,42 @@ const NavBar = () => {
   const { classes } = useStyles();
 
   const links = [
-    { link: "/about", label: "About us" },
-    { link: "/audio", label: "Audio" },
-    { link: "/instruments", label: "Instruments" },
+    { path: "/category", label: "Todos" },
+    { path: "/category/audio", label: "Audio" },
+    { path: "/category/accesories", label: "Accesorios" },
+    { path: "/category/instruments", label: "Instrumentos" },
   ];
 
-  const menuItems = links.map((link) => (
-    <a key={link.label} href={link.link} className={classes.link}>
+  const menuItems = links.map((link, idx) => (
+    <Link key={idx} to={link.path} className={classes.link}>
       {link.label}
-    </a>
+    </Link>
   ));
 
   return (
-    <Header height={120} mb={120}>
+    <div>
+    <Header height={120} mb={60} style={{backgroundColor: "#78ffeb", boxShadow: '1px 2px 9px #F4AAB9', position: "sticky"}}>
       <Container className={classes.header}>
         <div style={{ height: "100%", padding: 12 }}>
-          <img
-            style={{ height: "100%" }}
-            src="https://res.cloudinary.com/dzzlp6dxw/image/upload/v1687315837/music-modric-logo_aqdvtd.png"
-            alt="music-modric-logo"
-          />
+          <Link to="/">
+            <img
+              style={{ height: "100%" }}
+              src="https://res.cloudinary.com/dzzlp6dxw/image/upload/v1687315837/music-modric-logo_aqdvtd.png"
+              alt="music-modric-logo"
+            />
+          </Link>
         </div>
         <Group>
-          <Group spacing={5}>{menuItems}</Group>
+          <Group spacing={5}>
+            { menuItems }
+          </Group>
           <CartWidget />
         </Group>
       </Container>
     </Header>
+    <div className={classes.bar}></div>
+    <Outlet />
+    </div>
   );
 };
 
