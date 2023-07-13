@@ -1,5 +1,5 @@
 import { Card, Image, Text, Group, createStyles, Button, rem } from '@mantine/core';
-import { Navigate, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 
 const useStyles = createStyles((theme) => ({
   card: {
@@ -37,7 +37,6 @@ const useStyles = createStyles((theme) => ({
 
 export const ItemCard = ( {product} ) => {
   const { classes } = useStyles();
-  const navigate = useNavigate()
 
   return (
     <Card withBorder radius="md" className={classes.card}>
@@ -58,10 +57,11 @@ export const ItemCard = ( {product} ) => {
               $ {(product.price).toLocaleString()}
             </Text>
           </div>
-
-          <Button onClick={() => navigate(`/item/${product.id}`)} radius="xl" style={{ flex: 1 }}>
-            Ver detalle
-          </Button>
+          <Link to={`/item/${product.id}`}>
+            <Button radius="xl" style={{ flex: 1 }}>
+              Ver detalle
+            </Button>
+          </Link>
         </Group>
       </Card.Section>
     </Card>
