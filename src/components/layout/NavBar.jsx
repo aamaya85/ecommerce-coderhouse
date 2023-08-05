@@ -70,8 +70,6 @@ const NavBar = () => {
         </Group>
       </Container>
     </Header>
-    <div className={classes.bar}></div>
-    <Outlet />
     </div>
   );
 };

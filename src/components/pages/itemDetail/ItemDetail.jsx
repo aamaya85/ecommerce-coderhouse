@@ -1,7 +1,9 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { Card, Image, Text, Group, Badge, createStyles, Center, Button, rem } from "@mantine/core";
-import { products } from './../../../productsMock'
+import { products } from "./../../../productsMock";
+import { CartContext } from "../../../context/CartContext";
+import { CounterContainer } from "../../common/counter/CounterContainer";
 
 const useStyles = createStyles((theme) => ({
   card: {
@@ -45,28 +47,26 @@ const useStyles = createStyles((theme) => ({
 }));
 
 export const ItemDetail = () => {
+  const [item, setItem] = useState({});
+  const navigate = useNavigate();
+  const { id } = useParams();
 
-  const [ item, setItem ] = useState({})
-  const navigate = useNavigate()
-  const { id } = useParams()
+  const { cart, addProduct, removeProduct } = useContext(CartContext);
 
-  useEffect( () => {
-
+  useEffect(() => {
     const getProduct = (id) => {
       return new Promise((resolve, reject) => {
-        setTimeout( () => {
-          const itemsFiltered = products.filter( p => p.id == id)
-          resolve(itemsFiltered[0])
-        }, 200)
-      })
-    }
-    
+        setTimeout(() => {
+          const itemsFiltered = products.filter((p) => p.id == id);
+          resolve(itemsFiltered[0]);
+        }, 200);
+      });
+    };
+
     getProduct(id).then((response) => {
-      setItem(response)
-    })
-
-  }, [id])
-
+      setItem(response);
+    });
+  }, [id]);
 
   const { classes } = useStyles();
   return (
@@ -81,7 +81,7 @@ export const ItemDetail = () => {
           />
         </Card.Section>
 
-        <Group position="apart" mt="md">
+        <Group position="apart" mt="md" mb="md">
           <div>
             <Text fw={500}>{item.title}</Text>
             <Text fz="xs" c="dimmed">
@@ -91,26 +91,18 @@ export const ItemDetail = () => {
           <Badge variant="outline">{item.category}</Badge>
         </Group>
 
-        <Card.Section className={classes.section} mt="md">
-          <Text fz="sm" c="dimmed" className={classes.label}>
-            Basic configuration
-          </Text>
-        </Card.Section>
-
         <Card.Section className={classes.section}>
           <Group spacing={30}>
-            <div>
               <Text fz="xl" fw={700} sx={{ lineHeight: 1 }}>
                 $ {item.price}
               </Text>
-            </div>
-
-            <Button radius="md" variant="light" style={{ flex: 1 }}>
-              Agregar al carrito
-            </Button>
-            <Button radius="md" style={{ flex: 1 }}>
-              Comprar
-            </Button>
+              <CounterContainer />
+              <Button radius="md" variant="light" style={{ flex: 1 }} onClick={addProduct}>
+                Agregar al carrito
+              </Button>
+              <Button radius="md" style={{ flex: 1 }}>
+                Comprar
+              </Button>
           </Group>
         </Card.Section>
       </Card>

@@ -4,7 +4,7 @@ import { Container, Grid } from '@mantine/core'
 import ItemList from './ItemList'
 import { products } from './../../../productsMock'
 
-const ItemListContainer = () => {
+export const ItemListContainer = () => {
 
   const [ items, setItems ] = useState([])
   const { categoryName } = useParams()
@@ -37,5 +37,3 @@ const ItemListContainer = () => {
     </Container>
   )
 }
-
-export default ItemListContainer
