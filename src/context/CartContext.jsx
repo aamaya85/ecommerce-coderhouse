@@ -4,20 +4,41 @@ export const CartContext = createContext()
 
 const CartContextComponent = ({children}) => {
 
-    const [ cart, setCart ] = useState(0)
+    const [ cart, setCart ] = useState([])
 
-    const addProduct = () => {
-        setCart((qty) => qty + 1)
+    const addProduct = (product, quantity) => {
+        const exists = cart.some((item) => item.id === product.id)
+        let updatedCart = [...cart]
+        if (exists) updatedCart = cart.filter((item) => item.id !== product.id)
+        updatedCart.push({...product, quantity: quantity})
+        setCart(updatedCart)
     }
 
-    const removeProduct = () => {
-        if (cart > 0) setCart((qty) => qty - 1)
+    const removeProduct = (idProduct) => {
+        const updatedCart = cart.filter((item) => item.id !== idProduct)
+        setCart(updatedCart)
+    }
+
+    const getTotalAmount = () => {
+        let total = cart.reduce((acumm, item) => {
+            return acumm + (item.price * item.quantity)
+        }, 0)
+        return total
+    }
+
+    const getTotalItems = () => {
+        let total = cart.reduce((acumm, item) => {
+            return acumm + item.quantity
+        }, 0)
+        return total
     }
 
     let data = {
         cart,
         addProduct,
-        removeProduct
+        removeProduct,
+        getTotalAmount,
+        getTotalItems
     }
 
     return (

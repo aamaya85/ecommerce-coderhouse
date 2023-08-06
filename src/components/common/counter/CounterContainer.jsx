@@ -1,6 +1,7 @@
-import { useRef, useState } from 'react';
+import { useState, useContext } from 'react';
 import { createStyles, NumberInput, ActionIcon, rem } from '@mantine/core';
 import { IconPlus, IconMinus } from '@tabler/icons-react';
+import { CartContext } from '../../../context/CartContext';
 
 const useStyles = createStyles((theme) => ({
   wrapper: {
@@ -36,22 +37,26 @@ const useStyles = createStyles((theme) => ({
     textAlign: 'center',
     paddingRight: `${theme.spacing.sm} !important`,
     paddingLeft: `${theme.spacing.sm} !important`,
-    height: rem(28),
-    flex: 1,
+    height: rem(28)
   },
 }));
 
-
-export function CounterContainer({ min = 1, max = 10 }) {
+export function CounterContainer({ max, handleQuantity }) {
   const { classes } = useStyles();
   const [value, setValue] = useState(1);
 
+  const min = 1
+
   const add = () => {
-    setValue((previous) => previous + 1)
+    if (value < max) {
+      handleQuantity(value + 1)
+      setValue((previous) => previous + 1)
+    }
   }
 
   const remove = () => {
     if (value > 1){
+      handleQuantity(value - 1)
       setValue((previous) => previous - 1)
     }
   }
