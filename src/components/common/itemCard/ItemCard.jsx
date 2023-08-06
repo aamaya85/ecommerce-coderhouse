@@ -54,7 +54,7 @@ export const ItemCard = ( {product} ) => {
         <Group spacing={30}>
           <div>
             <Text fz="xl" fw={700} sx={{ lineHeight: 1 }}>
-              $ {(product.price).toLocaleString()}
+              $ {(product.price).toLocaleString("es-AR")}
             </Text>
           </div>
           <Link to={`/item/${product.id}`}>

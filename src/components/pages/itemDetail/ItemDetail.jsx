@@ -1,4 +1,4 @@
-import { Card, Image, Text, Group, Badge, createStyles, Center, Button, rem } from "@mantine/core";
+import { Card, Image, Skeleton, Text, Group, Badge, createStyles, Center, Button, rem } from "@mantine/core";
 import { CounterContainer } from "../../common/counter/CounterContainer";
 
 const useStyles = createStyles((theme) => ({
@@ -44,10 +44,13 @@ const useStyles = createStyles((theme) => ({
 
 export const ItemDetail = ({item, handleAddProduct, handleQuantity}) => {
 
+  let skeletonVisible = !Object.keys(item).length
+
   const { classes } = useStyles();
   return (
     <Center maw={600} mx="auto">
       <Card withBorder radius="md" className={classes.card}>
+      <Skeleton visible={skeletonVisible}>
         <Card.Section className={classes.imageSection}>
           <Image
             src={item.img}
@@ -70,7 +73,7 @@ export const ItemDetail = ({item, handleAddProduct, handleQuantity}) => {
         <Card.Section className={classes.section}>
           <Group spacing={30}>
               <Text fz="xl" fw={700} sx={{ lineHeight: 1 }}>
-                $ {item.price}
+                $ {item?.price?.toLocaleString("es-AR")}
               </Text>
               
               <CounterContainer max={item.stock} handleQuantity={handleQuantity}/>
@@ -83,6 +86,7 @@ export const ItemDetail = ({item, handleAddProduct, handleQuantity}) => {
               </Button>
           </Group>
         </Card.Section>
+        </Skeleton>
       </Card>
     </Center>
   );

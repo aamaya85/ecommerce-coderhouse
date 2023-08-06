@@ -33,12 +33,17 @@ const CartContextComponent = ({children}) => {
         return total
     }
 
+    const emptyCart = () => {
+        setCart([])
+    }
+
     let data = {
         cart,
         addProduct,
         removeProduct,
         getTotalAmount,
-        getTotalItems
+        getTotalItems,
+        emptyCart
     }
 
     return (

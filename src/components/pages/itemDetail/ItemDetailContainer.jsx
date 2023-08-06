@@ -1,14 +1,18 @@
 import { useState, useEffect, useContext } from "react";
-import { useParams } from "react-router-dom";
-import { products } from "../../../productsMock";
+import { useNavigate, useParams } from 'react-router-dom'
 import { CartContext } from "../../../context/CartContext";
 import { ItemDetail } from "./ItemDetail";
+import { db } from "./../../../firebaseConfig";
+import { getDoc, collection, doc } from "firebase/firestore";
+import { notifications } from "@mantine/notifications";
+import { IconCheck } from "@tabler/icons-react";
 
 export const ItemDetailContainer = () => {
   const [item, setItem] = useState({});
   const { id } = useParams();
   const { addProduct } = useContext(CartContext);
   const [ quantity, setQuantity ] = useState(1)
+  const navigate = useNavigate()
 
   const handleQuantity = (q) => {
     setQuantity(q)
@@ -16,25 +20,31 @@ export const ItemDetailContainer = () => {
 
   const handleAddProduct = () => {
     addProduct(item, quantity)
+    notifications.show({
+      message: 'El producto se ha agregado al carrito 🙂',
+      icon: <IconCheck size="1rem" />,
+      color: 'teal'
+    })
   }
 
   useEffect(() => {
-    const getProduct = (id) => {
-      return new Promise((resolve, reject) => {
-        setTimeout(() => {
-          const itemsFiltered = products.filter((p) => p.id == id);
-          resolve(itemsFiltered[0]);
-        }, 200);
-      });
-    };
 
-    getProduct(id).then((response) => {
-      setItem(response);
-    });
+      let refCollection = collection( db , "products" )
+      let refDoc = doc( refCollection, id )
+      
+      getDoc(refDoc).then( res => {
+        if (res.exists()){
+          setItem({...res.data(), id: res.id})
+        } else {
+          navigate("/itemNotFound")
+        }
+        
+      })
+  
   }, [id]);
 
 
   return (
-    <ItemDetail item={item} handleAddProduct={handleAddProduct} handleQuantity={handleQuantity}/>
+      <ItemDetail item={item} handleAddProduct={handleAddProduct} handleQuantity={handleQuantity}/>
   );
 };

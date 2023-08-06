@@ -1,18 +1,40 @@
 import { React, useState, useContext } from "react";
+import { useDisclosure } from '@mantine/hooks';
 import { CartContext } from "../../../context/CartContext";
-import { Avatar, Table, Group, Text, ActionIcon, Center, ScrollArea, Container } from "@mantine/core";
+import { Container, Button, Avatar, Table, Group, Text, ActionIcon, Center, Modal, useMantineTheme } from "@mantine/core";
 import { IconTrash } from "@tabler/icons-react";
-import { CounterContainer } from "../../common/counter/CounterContainer";
+import { notifications } from "@mantine/notifications";
 
 export const CartContainer = () => {
-  const { cart, removeProduct, getTotalAmount } = useContext(CartContext);
+  const { cart, removeProduct, getTotalAmount, emptyCart } = useContext(CartContext);
   const [ quantity, setQuantity ] = useState(1)
-
-  const handleQuantity = (q) => {
-    setQuantity(q)
-  }
+  const [opened, { open, close }] = useDisclosure(false);
+  const theme = useMantineTheme();
 
   let totalAmount = getTotalAmount()
+
+  const handleRemoveProduct = (id, quantity) => {
+    removeProduct(id, quantity)
+    notifications.show({
+      message: 'El producto se ha quitado del carrito 🙁',
+      icon: <IconTrash size="1rem" />,
+      color: 'red'
+    })
+  }
+
+  const handleEmptyCart = () => {
+    emptyCart()
+    close()
+    notifications.show({
+      message: 'El carrito se ha vaciado 🙁',
+      icon: <IconTrash size="1rem" />,
+      color: 'red'
+    })
+  }
+
+  const handleOpenModal = () => {
+    if (cart.length) open()
+  }
 
   const rows = cart.map((item, idx) => (
     <tr key={idx}>
@@ -33,12 +55,12 @@ export const CartContainer = () => {
         <Text fz="sm" ta="center">{item.stock}</Text>
       </td>
       <td>
-        <Text fz="sm" ta="center">$ {item.price.toFixed(2)}</Text>
+        <Text fz="sm" ta="center">$ {item.price.toLocaleString("es-AR")}</Text>
       </td>
       <td>
         <Center>
           <ActionIcon>
-            <IconTrash size="2rem" stroke={1.5} onClick={() => removeProduct(item.id, quantity)}/>
+            <IconTrash size="2rem" stroke={1.5} onClick={() => handleRemoveProduct(item.id, quantity)}/>
           </ActionIcon>
         </Center>
       </td>
@@ -47,6 +69,7 @@ export const CartContainer = () => {
 
   return (
     <div>
+      <Container>
       <Center maw={800} mx="auto">
           <Table verticalSpacing="md">
             <thead>
@@ -66,7 +89,46 @@ export const CartContainer = () => {
             <tbody>{rows}</tbody>
           </Table>
       </Center>
-      <Text mt="md" fw="bold" fz="lg" ta="center">TOTAL: $ {totalAmount}</Text>
+      <Center maw={800} mx="auto">
+        <Group>
+          <Text mt="md" fw="bold" fz="lg" ta="center">
+            <ActionIcon>
+              <IconTrash size="2rem" stroke={1.5} onClick={handleOpenModal}/>
+            </ActionIcon>
+          </Text>
+          <Text mt="md" fw="bold" fz="lg" ta="center">TOTAL: $ {totalAmount.toLocaleString("es-AR")}</Text>
+        </Group>
+        
+
+        
+      </Center>
+      <Modal
+        opened={opened}
+        onClose={close}
+        overlayProps={{
+          color: theme.colorScheme === 'dark' ? theme.colors.dark[9] : theme.colors.gray[2],
+          opacity: 0.55,
+          blur: 3,
+        }}
+        centered
+      >
+        <Group position="center" spacing="md">
+          <Group>
+            <Text>
+              Estás seguro que quieres vaciar el carrito?
+            </Text>
+          </Group>
+
+          <Group spacing="xl">
+            <Button variant="outline" size="sm" onClick={handleEmptyCart}>SI</Button>
+            <Button variant="outline" size="sm" onClick={close}>NO</Button>
+          </Group>
+        </Group>
+        
+
+      </Modal>
+      </Container>
+
       </div>
   );
 };
