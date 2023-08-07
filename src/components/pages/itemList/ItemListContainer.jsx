@@ -30,8 +30,8 @@ export const ItemListContainer = () => {
           icon: <IconError404 size="1rem" />,
           color: 'teal'
         })
+        navigate("/category")
       }
-      navigate("/category")
     })
 
   }, [categoryName, navigate])
